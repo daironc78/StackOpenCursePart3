@@ -1,0 +1,22 @@
+### HELP
+GET http://localhost:3001
+
+### GET ALL
+GET http://localhost:3001/api/notes
+
+### GET FOR ID
+GET http://localhost:3001/api/notes/3
+
+### DELETE FOR ID
+DELETE http://localhost:3001/api/notes/3
+
+### SAVE NEW NOTE
+POST http://localhost:3001/api/notes
+Content-Type: application/json
+
+{
+    "content": "VS code rest client is a pretty handy tool",
+    "important": true
+}
+
+### UPDATE OLD NOTE
