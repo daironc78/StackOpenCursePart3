@@ -1,22 +1,22 @@
 ### HELP
-GET http://localhost:3001
+GET http://localhost:3001/info
 
 ### GET ALL
-GET http://localhost:3001/api/notes
+GET http://localhost:3001/api/persons
 
 ### GET FOR ID
-GET http://localhost:3001/api/notes/3
+GET http://localhost:3001/api/persons/4
 
 ### DELETE FOR ID
-DELETE http://localhost:3001/api/notes/3
+DELETE http://localhost:3001/api/persons/4
 
 ### SAVE NEW NOTE
-POST http://localhost:3001/api/notes
+POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-    "content": "VS code rest client is a pretty handy tool",
-    "important": true
+    "name": "Dairon Casas",
+    "number": "3016958000"
 }
 
 ### UPDATE OLD NOTE
