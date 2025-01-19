@@ -12,6 +12,7 @@ const app = express();
  * Middleware to parse JSON bodies.
  */
 app.use(cors()); // Allow cross-origin requests
+app.use(express.static('dist')) // Serve static files from the 'dist' directory
 app.use(express.json()); // Parse JSON bodies
 
 /**
