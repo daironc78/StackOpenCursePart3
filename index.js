@@ -1,5 +1,7 @@
-var express = require('express')
-var morgan = require('morgan')
+const express = require('express')
+const morgan = require('morgan')
+const cors = require("cors");
+
 
 /**
  * Express application instance.
@@ -9,7 +11,8 @@ const app = express();
 /**
  * Middleware to parse JSON bodies.
  */
-app.use(express.json());
+app.use(cors()); // Allow cross-origin requests
+app.use(express.json()); // Parse JSON bodies
 
 /**
  * Middleware to log requests using Morgan.
@@ -180,7 +183,7 @@ app.use(unknownEndpoint);
  * Starts the server on the specified port.
  * @param {number} PORT - Port number.
  */
-const PORT = 3001;
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
