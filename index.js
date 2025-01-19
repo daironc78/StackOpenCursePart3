@@ -23,9 +23,9 @@ let notes = [
 ];
 
 // HELP
-app.get("/", (request, response) => {
-  response.send("<h1>Hello World!</h1>");
-});
+//app.get("/", (request, response) => {
+//  response.send("<h1>Hello World!</h1>");
+//});
 
 // GET ALL
 app.get("/api/notes", (request, response) => {
@@ -99,7 +99,7 @@ app.post("/api/notes", (request, response) => {
   response.json(note);
 });
 app.use(cors());
-
+app.use(express.static('dist'))
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
