@@ -169,6 +169,30 @@ app.post("/api/persons", (request, response) => {
 });
 
 /**
+ * Route to update a person by ID.
+ * @param {Object} request - Express request object.
+ * @param {Object} response - Express response object.
+ */
+app.put("/api/persons/:id", (request, response) => {
+  const id = Number(request.params.id);
+  const body = request.body;
+
+  if (!body.name || !body.number) {
+    return response.status(400).json({ error: "name or number missing" });
+  }
+
+  const personIndex = persons.findIndex((person) => person.id === id);
+  if (personIndex === -1) {
+    return response.status(404).json({ error: "person not found" });
+  }
+
+  const updatedPerson = { ...persons[personIndex], name: body.name, number: body.number };
+  persons[personIndex] = updatedPerson;
+
+  response.json(updatedPerson);
+});
+
+/**
  * Middleware to handle unknown endpoints.
  * @param {Object} request - Express request object.
  * @param {Object} response - Express response object.
