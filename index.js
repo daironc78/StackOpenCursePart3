@@ -1,5 +1,8 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
+app.use(cors());
+app.use(express.json()); // Middleware to handle JSON requests
 
 let notes = [
   {
@@ -41,8 +44,27 @@ app.get("/api/notes/:id", (request, response) => {
   }
 });
 
-// DELETE FOR ID
-app.use(express.json());
+app.put("/api/notes/:id", (request, response) => {
+  const id = Number(request.params.id);
+  const body = request.body;
+
+  const note = notes.find((note) => note.id === id);
+  if (!note) {
+    return response.status(404).json({
+      error: "note not found",
+    });
+  }
+
+  const updatedNote = {
+    ...note,
+    content: body.content || note.content,
+    important: body.important !== undefined ? body.important : note.important,
+  };
+
+  notes = notes.map((note) => (note.id !== id ? note : updatedNote));
+
+  response.json(updatedNote);
+});
 
 app.delete("/api/notes/:id", (request, response) => {
   const id = Number(request.params.id);
@@ -76,7 +98,7 @@ app.post("/api/notes", (request, response) => {
 
   response.json(note);
 });
-
+app.use(cors());
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

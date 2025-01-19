@@ -20,3 +20,10 @@ Content-Type: application/json
 }
 
 ### UPDATE OLD NOTE
+PUT http://localhost:3001/api/notes/3
+Content-Type: application/json
+
+{
+    "content": "VS code rest client is a pretty handy tool",
+    "important": true
+}
