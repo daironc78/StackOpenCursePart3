@@ -15,15 +15,16 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "start": "node --inspect index.js",
+    "dev": "nodemon --inspect index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf dist && cd ../StackOpenCursePart2/part2 && npm run build && cp -r dist ../../StackOpenCursePart3",
     "deploy:full": "npm run build:ui && git add . && git commit -m \"uibuild v$(npm pkg get version | tr -d '\"')\" && git push"
   },
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "mongoose": "^8.9.5"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"
