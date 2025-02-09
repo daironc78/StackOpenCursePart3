@@ -1,6 +1,6 @@
 {
   "name": "part3",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "",
   "homepage": "https://github.com/daironc78/StackOpenCursePart3#readme",
   "bugs": {
@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "mongoose": "^8.10.0",
     "morgan": "^1.10.0"

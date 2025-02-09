@@ -1,3 +1,6 @@
+// REQUIERES
+const { PORT } = require('./utils/config')
+const Phonebook = require('./models/phonebook')
 const express = require('express')
 const morgan = require('morgan')
 const cors = require("cors");
@@ -41,43 +44,16 @@ const requestLogger = (request, _response, next) => {
 app.use(requestLogger);
 
 /**
- * Array of person objects.
- * @type {Array<{id: number, name: string, number: string}>}
- */
-let persons = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
-
-/**
  * Route to get information about the phonebook.
  * @param {Object} request - Express request object.
  * @param {Object} response - Express response object.
  */
 app.get("/info", (_request, response) => {
-  response.send(
-    `<p>Phonebook has info for ${
-      persons.length
-    } people </p> <br /> ${new Date()}`
-  );
+  Phonebook.find({}).then((persons) => {
+    response.send(
+      `<p>Phonebook has info for ${persons.length} people </p> <br /> ${new Date()}`
+    );
+  });
 });
 
 /**
@@ -86,7 +62,14 @@ app.get("/info", (_request, response) => {
  * @param {Object} response - Express response object.
  */
 app.get("/api/persons", (_request, response) => {
-  response.json(persons);
+  Phonebook.find({}).then((contacts) => {
+    response.json(contacts);
+  }).catch(error => {
+    response.status(500).json({
+      error: 'Internal Database Error',
+      details: error.message
+    });
+  });
 });
 
 /**
@@ -95,14 +78,21 @@ app.get("/api/persons", (_request, response) => {
  * @param {Object} response - Express response object.
  */
 app.get("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-  const person = persons.find((person) => person.id === id);
-
-  if (person) {
-    response.json(person);
-  } else {
-    response.status(404).end();
-  }
+  Phonebook.findById(request.params.id).then((contact) => {
+    if (contact) {
+      response.json(contact);
+    } else {
+      response.status(404).json({
+        error: "Person not found",
+        details: `Person with id ${request.params.id} not found`
+      }).end();
+    }
+  }).catch(error => {
+    response.status(500).json({
+      error: 'Internal Database Error',
+      details: error.message
+    });
+  });
 });
 
 /**
@@ -111,19 +101,22 @@ app.get("/api/persons/:id", (request, response) => {
  * @param {Object} response - Express response object.
  */
 app.delete("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-  persons = persons.filter((person) => person.id !== id);
-  response.status(204).end();
+  Phonebook.findByIdAndDelete(request.params.id).then((contact) => {
+    if (contact) {
+      response.status(204).end();
+    } else {
+      response.status(404).json({
+        error: "Person not found",
+        details: `Person with id ${request.params.id} not found`
+      }).end();
+    }
+  }).catch(error => { 
+    response.status(500).json({
+      error: 'Internal Database Error',
+      details: error.message
+    });
+  });
 });
-
-/**
- * Generates a new unique ID for a person.
- * @returns {number} New unique ID.
- */
-const generateId = () => {
-  const maxId = persons.length > 0 ? Math.max(...persons.map((n) => n.id)) : 0;
-  return maxId + 1;
-};
 
 /**
  * Route to add a new person.
@@ -131,42 +124,56 @@ const generateId = () => {
  * @param {Object} response - Express response object.
  */
 app.post("/api/persons", (request, response) => {
-  const body = request.body;
-  console.log("body", body);
+  let body = request.body;
   let error = [];
-  if (!body.name || !body.number) {
-    console.log("name or number missing");
-
+  if (!body.name || !body.phone) {
     if (!body.name) {
-      console.log("name missing");
       error = error.concat({ name: "name missing" });
     }
 
-    if (!body.number) {
-      console.log("number missing");
-      error = error.concat({ number: "number missing" });
+    if (!body.phone) {
+      error = error.concat({ phone: "number missing" });
     }
 
     return response.status(400).json({
-      error: error,
+      error: 'Validation Error',
+      details: error
     });
   }
 
-  if (persons.find((person) => person.name === body.name)) {
-    return response.status(400).json({
-      error: error.concat({ name: "name must be unique" }),
+  Phonebook.findOne({ name: body.name }).then(existingContact => {
+    if (existingContact) {
+      existingContact.phone = body.phone;
+      existingContact.save().then(updatedContact => {
+        response.json(updatedContact);
+      }).catch(error => {
+        response.status(500).json({
+          error: 'Internal Database Error',
+          details: error.message
+        });
+      });
+      return;
+    }
+
+    const contact = new Phonebook({
+      name: body.name,
+      phone: body.phone,
     });
-  }
-
-  const person = {
-    id: generateId(),
-    name: body.name,
-    number: body.number,
-  };
-
-  persons = persons.concat(person);
-
-  response.json(person);
+    
+    contact.save().then(savedPerson => {
+      response.json(savedPerson);
+    }).catch(error => {
+      response.status(500).json({
+        error: 'Internal Database Error',
+        details: error.message
+      });
+    });
+  }).catch(error => {
+    response.status(500).json({
+      error: 'Internal Database Error',
+      details: error.message
+    });
+  });
 });
 
 /**
@@ -175,22 +182,45 @@ app.post("/api/persons", (request, response) => {
  * @param {Object} response - Express response object.
  */
 app.put("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
   const body = request.body;
+  let error = [];
+  if (!body.name || !body.phone) {
+    if (!body.name) {
+      error = error.concat({ name: "name missing" });
+    }
 
-  if (!body.name || !body.number) {
-    return response.status(400).json({ error: "name or number missing" });
+    if (!body.phone) {
+      error = error.concat({ phone: "number missing" });
+    }
+
+    return response.status(400).json({
+      error: 'Validation Error',
+      details: error
+    });
   }
 
-  const personIndex = persons.findIndex((person) => person.id === id);
-  if (personIndex === -1) {
-    return response.status(404).json({ error: "person not found" });
-  }
+  const updatedPerson = {
+    name: body.name,
+    phone: body.phone,
+  };
 
-  const updatedPerson = { ...persons[personIndex], name: body.name, number: body.number };
-  persons[personIndex] = updatedPerson;
-
-  response.json(updatedPerson);
+  Phonebook.findByIdAndUpdate(request.params.id, updatedPerson, { new: true, runValidators: true, context: 'query' })
+    .then((result) => {
+      if (result) {
+        response.json(result);
+      } else {
+        response.status(404).json({
+          error: "Person not found",
+          details: `Person with id ${request.params.id} not found`
+        }).end();
+      }
+    })
+    .catch((error) => {
+      response.status(500).json({
+        error: 'Internal Database Error',
+        details: error.message
+      });
+    });
 });
 
 /**
@@ -208,7 +238,6 @@ app.use(unknownEndpoint); // Handle unknown endpoints
  * Starts the server on the specified port.
  * @param {number} PORT - Port number.
  */
-const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
