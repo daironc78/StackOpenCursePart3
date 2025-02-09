@@ -5,22 +5,22 @@ GET http://localhost:3001
 GET http://localhost:3001/api/notes
 
 ### GET FOR ID
-GET http://localhost:3001/api/notes/3
+GET http://localhost:3001/api/notes/67a7a781bb9cef76dcb01e94
 
 ### DELETE FOR ID
-DELETE http://localhost:3001/api/notes/3
+DELETE http://localhost:3001/api/notes/67a7a781bb9cef76dcb01e94
 
 ### SAVE NEW NOTE
 POST http://localhost:3001/api/notes
 Content-Type: application/json
 
 {
-    "content": "VS code rest client is a pretty handy tool",
-    "important": true
+    "content": "VS Java",
+    "important": false
 }
 
 ### UPDATE OLD NOTE
-PUT http://localhost:3001/api/notes/3
+PUT http://localhost:3001/api/notes/67a7a781bb9cef76dcb01e94
 Content-Type: application/json
 
 {

@@ -1,83 +1,68 @@
+// REQUIERES
+const { PORT } = require('./utils/config')
+const Note = require('./models/note')
 const express = require("express");
 const cors = require("cors");
+
+// CONFIGURACION DE APP
 const app = express();
 app.use(cors());
 app.use(express.json()); // Middleware to handle JSON requests
 
-let notes = [
-  {
-    id: 1,
-    content: "HTML is easy",
-    important: true,
-  },
-  {
-    id: 2,
-    content: "Browser can execute only JavaScript",
-    important: false,
-  },
-  {
-    id: 3,
-    content: "GET and POST are the most important methods of HTTP protocol",
-    important: true,
-  },
-];
-
-// HELP
-//app.get("/", (request, response) => {
-//  response.send("<h1>Hello World!</h1>");
-//});
-
 // GET ALL
 app.get("/api/notes", (request, response) => {
-  response.json(notes);
+  Note.find({}).then(result => {
+    response.json(result)
+  }).catch(error => {
+    console.log('error:',error);
+    response.status(500).json({ error: 'Failed to save the note' });
+  });
 });
 
 // GET FOR ID
 app.get("/api/notes/:id", (request, response) => {
-  const id = Number(request.params.id);
-  const note = notes.find((note) => note.id === id);
-
-  if (note) {
-    response.json(note);
-  } else {
-    response.status(404).end();
-  }
+  Note.findById(request.params.id).then(note => {
+    response.json(note)
+  })
 });
 
 app.put("/api/notes/:id", (request, response) => {
-  const id = Number(request.params.id);
+  const { id } = request.params;
   const body = request.body;
 
-  const note = notes.find((note) => note.id === id);
-  if (!note) {
-    return response.status(404).json({
-      error: "note not found",
-    });
-  }
-
   const updatedNote = {
-    ...note,
-    content: body.content || note.content,
-    important: body.important !== undefined ? body.important : note.important,
+    content: body.content,
+    important: body.important,
   };
 
-  notes = notes.map((note) => (note.id !== id ? note : updatedNote));
-
-  response.json(updatedNote);
+  Note.findByIdAndUpdate(id, updatedNote, { new: true })
+    .then(result => {
+      if (result) {
+        response.json(result);
+      } else {
+        response.status(404).json({ error: "note not found" });
+      }
+    })
+    .catch(error => {
+      console.log('error:', error);
+      response.status(500).json({ error: 'Failed to update the note' });
+    });
 });
 
 app.delete("/api/notes/:id", (request, response) => {
-  const id = Number(request.params.id);
-  notes = notes.filter((note) => note.id !== id);
-
-  response.status(204).end();
+  Note.findByIdAndRemove(request.params.id)
+    .then(result => {
+      if (result) {
+        response.status(204).end();
+      } else {
+        response.status(404).json({ error: "note not found" });
+      }
+    })
+    .catch(error => {
+      console.log('error:', error);
+      response.status(500).json({ error: 'Failed to delete the note' });
+    });
 });
-
-// SAVE NEW NOTE
-const generateId = () => {
-  const maxId = notes.length > 0 ? Math.max(...notes.map((n) => n.id)) : 0;
-  return maxId + 1;
-};
 
 app.post("/api/notes", (request, response) => {
   const body = request.body;
@@ -88,19 +73,20 @@ app.post("/api/notes", (request, response) => {
     });
   }
 
-  const note = {
+  const note = new Note({
     content: body.content,
-    important: Boolean(body.important) || false,
-    id: generateId(),
-  };
-
-  notes = notes.concat(note);
-
-  response.json(note);
+    important: body.important || false
+  });
+  
+  note.save().then(savedNote => {
+    response.json(savedNote)
+  }).catch(error => {
+    response.status(500).json({ error: 'Failed to save the note' });
+  });
 });
+
 app.use(cors());
 app.use(express.static('dist'))
-const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
