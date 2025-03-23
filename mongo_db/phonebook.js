@@ -19,8 +19,19 @@ mongoose.connect(url)
   })
 
 const phonebookSchema = new mongoose.Schema({
-    name: String,
-    phone: Number,
+  name: {
+    String,
+    type: String,
+    minlength: 3,
+    required: true
+  },
+  phone: {
+    Number,
+    type: Number,
+    min: 1000000,
+    max: 3999999999,
+    required: true
+  }
 })
 
 const Phonebook = mongoose.model('Phonebook', phonebookSchema)
