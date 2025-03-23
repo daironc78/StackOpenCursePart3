@@ -20,16 +20,14 @@ mongoose.connect(url)
 
 const phonebookSchema = new mongoose.Schema({
   name: {
-    String,
     type: String,
     minlength: 3,
     required: true
   },
   phone: {
-    Number,
     type: Number,
-    min: 1000000,
-    max: 3999999999,
+    min: [6, 'Must be at least 6, got {VALUE}'],
+    max: 12,
     required: true
   }
 })

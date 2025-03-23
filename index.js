@@ -174,18 +174,22 @@ app.put("/api/persons/:id", (request, response, next) => {
     phone: body.phone,
   };
 
+  //Phonebook.schema.path('name').validate(body.name).catch(error => next(error));
+  //Phonebook.schema.path('phone').validate(body.phone).catch(error => next(error));
+
   Phonebook.findByIdAndUpdate(request.params.id, updatedPerson, { new: true, runValidators: true, context: 'query' })
-    .then((result) => {
-      if (result) {
-        response.json(result);
-      } else {
-        response.status(404).json({
-          error: "Person not found",
-          details: `Person with id ${request.params.id} not found`
-        }).end();
-      }
-    })
-    .catch((error) => next(error));
+  .then((result) => {
+    if (result) {
+      response.json(result);
+    } else {
+      response.status(404).json({
+        error: "Person not found",
+        details: `Person with id ${request.params.id} not found`
+      }).end();
+    }
+  })
+  .catch((error) => next(error));
+  
 });
 
 /**
@@ -213,6 +217,9 @@ const errorHandler = (error, _request, response, next) => {
     return response.status(400).json({ error: 'Validation Error', details: error.message });
   } else if (error.name === 'CastError') {
     return response.status(400).json({ error: 'Malformed ID', details: error.message });
+  }
+  else {
+    return response.status(400).json({ error: 'Mongo Error', details: error.message });
   }
 
   next(error);

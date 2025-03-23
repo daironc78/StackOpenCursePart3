@@ -5,25 +5,25 @@ GET http://localhost:3001/info
 GET http://localhost:3001/api/persons
 
 ### GET FOR ID
-GET http://localhost:3001/api/persons/67a8e7c3b658d0d3536d8480
+GET http://localhost:3001/api/persons/67e034be029ca03e46a5c565
 
 ### DELETE FOR ID
-DELETE http://localhost:3001/api/persons/67a8ebdf4e3b7e3c122d1792
+DELETE http://localhost:3001/api/persons/67e03bcd607ed8be85b71de7
 
 ### SAVE NEW NOTE
 POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-    "name": "Carmen Casas",
-    "phone": "3016958001"
+    "name": "Ca",
+    "phone": 12345
 }
 
 ### UPDATE OLD NOTE
-PUT http://localhost:3001/api/persons/67a8e7c3b658d0d3536d8480
+PUT http://localhost:3001/api/persons/67e03d440c895ae9e7fb0473
 Content-Type: application/json
 
 {
-    "name": "Dairon Casas",
-    "phone": "3016958001"
+    "name": "An",
+    "phone": 5
 }
