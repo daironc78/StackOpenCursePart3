@@ -61,15 +61,10 @@ app.get("/info", (_request, response) => {
  * @param {Object} request - Express request object.
  * @param {Object} response - Express response object.
  */
-app.get("/api/persons", (_request, response) => {
+app.get("/api/persons", (_request, response, next) => {
   Phonebook.find({}).then((contacts) => {
     response.json(contacts);
-  }).catch(error => {
-    response.status(500).json({
-      error: 'Internal Database Error',
-      details: error.message
-    });
-  });
+  }).catch(error => next(error));
 });
 
 /**
@@ -77,7 +72,7 @@ app.get("/api/persons", (_request, response) => {
  * @param {Object} request - Express request object.
  * @param {Object} response - Express response object.
  */
-app.get("/api/persons/:id", (request, response) => {
+app.get("/api/persons/:id", (request, response, next) => {
   Phonebook.findById(request.params.id).then((contact) => {
     if (contact) {
       response.json(contact);
@@ -87,12 +82,7 @@ app.get("/api/persons/:id", (request, response) => {
         details: `Person with id ${request.params.id} not found`
       }).end();
     }
-  }).catch(error => {
-    response.status(500).json({
-      error: 'Internal Database Error',
-      details: error.message
-    });
-  });
+  }).catch(error => next(error));
 });
 
 /**
@@ -100,7 +90,7 @@ app.get("/api/persons/:id", (request, response) => {
  * @param {Object} request - Express request object.
  * @param {Object} response - Express response object.
  */
-app.delete("/api/persons/:id", (request, response) => {
+app.delete("/api/persons/:id", (request, response, next) => {
   Phonebook.findByIdAndDelete(request.params.id).then((contact) => {
     if (contact) {
       response.status(204).end();
@@ -110,12 +100,7 @@ app.delete("/api/persons/:id", (request, response) => {
         details: `Person with id ${request.params.id} not found`
       }).end();
     }
-  }).catch(error => { 
-    response.status(500).json({
-      error: 'Internal Database Error',
-      details: error.message
-    });
-  });
+  }).catch(error => next(error));
 });
 
 /**
@@ -123,7 +108,7 @@ app.delete("/api/persons/:id", (request, response) => {
  * @param {Object} request - Express request object.
  * @param {Object} response - Express response object.
  */
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
   let body = request.body;
   let error = [];
   if (!body.name || !body.phone) {
@@ -146,12 +131,7 @@ app.post("/api/persons", (request, response) => {
       existingContact.phone = body.phone;
       existingContact.save().then(updatedContact => {
         response.json(updatedContact);
-      }).catch(error => {
-        response.status(500).json({
-          error: 'Internal Database Error',
-          details: error.message
-        });
-      });
+      }).catch(error => next(error));
       return;
     }
 
@@ -162,18 +142,8 @@ app.post("/api/persons", (request, response) => {
     
     contact.save().then(savedPerson => {
       response.json(savedPerson);
-    }).catch(error => {
-      response.status(500).json({
-        error: 'Internal Database Error',
-        details: error.message
-      });
-    });
-  }).catch(error => {
-    response.status(500).json({
-      error: 'Internal Database Error',
-      details: error.message
-    });
-  });
+    }).catch(error => next(error));
+  }).catch(error => next(error));
 });
 
 /**
@@ -181,7 +151,7 @@ app.post("/api/persons", (request, response) => {
  * @param {Object} request - Express request object.
  * @param {Object} response - Express response object.
  */
-app.put("/api/persons/:id", (request, response) => {
+app.put("/api/persons/:id", (request, response, next) => {
   const body = request.body;
   let error = [];
   if (!body.name || !body.phone) {
@@ -215,12 +185,7 @@ app.put("/api/persons/:id", (request, response) => {
         }).end();
       }
     })
-    .catch((error) => {
-      response.status(500).json({
-        error: 'Internal Database Error',
-        details: error.message
-      });
-    });
+    .catch((error) => next(error));
 });
 
 /**
@@ -234,6 +199,26 @@ const unknownEndpoint = (_request, response) => {
 
 app.use(unknownEndpoint); // Handle unknown endpoints
 
+/**
+ * Middleware to handle errors.
+ * @param {Object} error - Error object.
+ * @param {Object} request - Express request object.
+ * @param {Object} response - Express response object.
+ * @param {Function} next - Next middleware function.
+ */
+const errorHandler = (error, _request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: 'Validation Error', details: error.message });
+  } else if (error.name === 'CastError') {
+    return response.status(400).json({ error: 'Malformed ID', details: error.message });
+  }
+
+  next(error);
+};
+
+app.use(errorHandler); // Handle errors
 /**
  * Starts the server on the specified port.
  * @param {number} PORT - Port number.
