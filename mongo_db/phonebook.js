@@ -1,17 +1,22 @@
 const mongoose = require('mongoose')
+const { URI_MONGO_DB } = require('../utils/config')
 
 if (process.argv.length<3) {
   console.log('give password as argument')
   process.exit(1)
 }
 
-const password = process.argv[2]
-
-const url = `mongodb+srv://daironc78:${password}@cluster0.sptet.mongodb.net/PhonebookApp?retryWrites=true&w=majority&appName=Cluster0`
+const url = URI_MONGO_DB
 
 mongoose.set('strictQuery',false)
 
 mongoose.connect(url)
+  .then(result => {
+    console.log('connected to MongoDB')
+  })
+  .catch(error => {
+    console.log('error connecting to MongoDB:', error.message)
+  })
 
 const phonebookSchema = new mongoose.Schema({
     name: String,
