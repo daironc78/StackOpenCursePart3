@@ -73,7 +73,7 @@ app.put("/api/notes/:id", (request, response) => {
     important: body.important,
   };
 
-  Note.findByIdAndUpdate(id, updatedNote, { new: true })
+  Note.findByIdAndUpdate(id, updatedNote, { new: true, runValidators: true, context: 'query' })
     .then(result => {
       if (result) {
         response.json(result);
