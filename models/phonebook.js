@@ -17,8 +17,17 @@ mongoose.connect(url)
 
 // CREATE SCHEMA
 const noteSchema = new mongoose.Schema({
-  name: String,
-  phone: Number
+  name: {
+    type: String,
+    minlength: 3,
+    required: true
+  },
+  phone: {
+    type: Number,
+    min: [1000000, "Must be at least 1000000, got {VALUE}"],
+    max: 3999999999,
+    required: true
+  }
 });
 
 // CONFIGURE SCHEMA

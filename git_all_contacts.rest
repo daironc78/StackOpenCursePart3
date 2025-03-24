@@ -8,15 +8,15 @@ GET http://localhost:3001/api/persons
 GET http://localhost:3001/api/persons/67e034be029ca03e46a5c565
 
 ### DELETE FOR ID
-DELETE http://localhost:3001/api/persons/67e03bcd607ed8be85b71de7
+DELETE http://localhost:3001/api/persons/67e0af039a44fb4732778305
 
 ### SAVE NEW NOTE
 POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-    "name": "Ca",
-    "phone": 12345
+    "name": "dam",
+    "phone": 7
 }
 
 ### UPDATE OLD NOTE
