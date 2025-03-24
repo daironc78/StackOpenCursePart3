@@ -1,29 +1,29 @@
 ### HELP
-GET http://localhost:3001/info
+GET http://localhost:3002/help
 
 ### GET ALL
-GET http://localhost:3001/api/phonebook
+GET http://localhost:3002/api/phonebook
 
 ### GET FOR ID
-GET http://localhost:3001/api/phonebook/67e034be029ca03e46a5c565
+GET http://localhost:3002/api/phonebook/67e1960b432d4025df9d9862
 
 ### DELETE FOR ID
-DELETE http://localhost:3001/api/phonebook/67e0af039a44fb4732778305
+DELETE http://localhost:3002/api/phonebook/67e0af039a44fb4732778305
 
 ### SAVE NEW NOTE
-POST http://localhost:3001/api/phonebook
+POST http://localhost:3002/api/phonebook
 Content-Type: application/json
 
 {
-    "name": "dam",
-    "phone": 7
+    "name": "Dairon Castro",
+    "phone": 3016958000
 }
 
 ### UPDATE OLD NOTE
-PUT http://localhost:3001/api/phonebook/67e03d440c895ae9e7fb0473
+PUT http://localhost:3002/api/phonebook/67e1960b432d4025df9d9862
 Content-Type: application/json
 
 {
-    "name": "An",
-    "phone": 5
+    "name": "Dairon Casas",
+    "phone": 3016958000
 }

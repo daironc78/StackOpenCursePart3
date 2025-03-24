@@ -3,6 +3,7 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const PhonebookRouter = require("./controllers/phonebook-controller");
+const HelpRouter = require("./controllers/help-controller");
 const middleware = require("./utils/middleware");
 const logger = require("./utils/logger");
 const mongoose = require("mongoose");
@@ -25,6 +26,7 @@ morgan.token("body", (req) => JSON.stringify(req.body));
 app.use(morgan("tiny"));
 
 app.use("/api/phonebook", PhonebookRouter);
+app.use("/help", HelpRouter);
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
 
