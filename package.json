@@ -19,7 +19,8 @@
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf dist && cd ../StackOpenCursePart2/part2 && npm run build && cp -r dist ../../StackOpenCursePart3",
-    "deploy:full": "npm run build:ui && git add . && git commit -m \"uibuild v$(npm pkg get version | tr -d '\"')\" && git push"
+    "deploy:full": "npm run build:ui && git add . && git commit -m \"uibuild v$(npm pkg get version | tr -d '\"')\" && git push",
+    "lint": "eslint ."
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -29,6 +30,10 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.23.0",
+    "@stylistic/eslint-plugin-js": "^4.2.0",
+    "eslint": "^9.23.0",
+    "globals": "^16.0.0",
     "nodemon": "^3.1.9"
   }
 }

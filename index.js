@@ -1,8 +1,8 @@
 // REQUIERES
-const { PORT } = require('./utils/config')
-const Phonebook = require('./models/phonebook')
-const express = require('express')
-const morgan = require('morgan')
+const { PORT } = require("./utils/config");
+const Phonebook = require("./models/phonebook");
+const express = require("express");
+const morgan = require("morgan");
 const cors = require("cors");
 
 
@@ -15,7 +15,7 @@ const app = express();
  * Middleware to parse JSON bodies.
  */
 app.use(cors()); // Allow cross-origin requests
-app.use(express.static('dist')) // Serve static files from the 'dist' directory
+app.use(express.static("dist")); // Serve static files from the "dist" directory
 app.use(express.json()); // Parse JSON bodies
 
 /**
@@ -121,7 +121,7 @@ app.post("/api/persons", (request, response, next) => {
     }
 
     return response.status(400).json({
-      error: 'Validation Error',
+      error: "Validation Error",
       details: error
     });
   }
@@ -164,7 +164,7 @@ app.put("/api/persons/:id", (request, response, next) => {
     }
 
     return response.status(400).json({
-      error: 'Validation Error',
+      error: "Validation Error",
       details: error
     });
   }
@@ -177,18 +177,18 @@ app.put("/api/persons/:id", (request, response, next) => {
   //Phonebook.schema.path('name').validate(body.name).catch(error => next(error));
   //Phonebook.schema.path('phone').validate(body.phone).catch(error => next(error));
 
-  Phonebook.findByIdAndUpdate(request.params.id, updatedPerson, { new: true, runValidators: true, context: 'query' })
-  .then((result) => {
-    if (result) {
-      response.json(result);
-    } else {
-      response.status(404).json({
-        error: "Person not found",
-        details: `Person with id ${request.params.id} not found`
-      }).end();
-    }
-  })
-  .catch((error) => next(error));
+  Phonebook.findByIdAndUpdate(request.params.id, updatedPerson, { new: true, runValidators: true, context: "query" })
+    .then((result) => {
+      if (result) {
+        response.json(result);
+      } else {
+        response.status(404).json({
+          error: "Person not found",
+          details: `Person with id ${request.params.id} not found`
+        }).end();
+      }
+    })
+    .catch((error) => next(error));
   
 });
 
@@ -213,13 +213,10 @@ app.use(unknownEndpoint); // Handle unknown endpoints
 const errorHandler = (error, _request, response, next) => {
   console.error(error.message);
 
-  if (error.name === 'ValidationError') {
-    return response.status(400).json({ error: 'Validation Error', details: error.message });
-  } else if (error.name === 'CastError') {
-    return response.status(400).json({ error: 'Malformed ID', details: error.message });
-  }
-  else {
-    return response.status(400).json({ error: 'Mongo Error', details: error.message });
+  if (error.name === "ValidationError") {
+    return response.status(400).json({ error: "Validation Error", details: error.message });
+  } else if (error.name === "CastError") {
+    return response.status(400).json({ error: "Malformed ID", details: error.message });
   }
 
   next(error);
