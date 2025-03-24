@@ -1,14 +1,14 @@
 {
-  "name": "part3",
-  "version": "1.0.4",
+  "name": "part4",
+  "version": "2.0.0",
   "description": "",
-  "homepage": "https://github.com/daironc78/StackOpenCursePart3#readme",
+  "homepage": "https://github.com/daironc78/StackOpenCursePart4#readme",
   "bugs": {
-    "url": "https://github.com/daironc78/StackOpenCursePart3/issues"
+    "url": "https://github.com/daironc78/StackOpenCursePart4/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/daironc78/StackOpenCursePart3.git"
+    "url": "git+https://github.com/daironc78/StackOpenCursePart4.git"
   },
   "license": "ISC",
   "author": "",
@@ -18,7 +18,7 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:ui": "rm -rf dist && cd ../StackOpenCursePart2/part2 && npm run build && cp -r dist ../../StackOpenCursePart3",
+    "build:ui": "rm -rf dist && cd ../StackOpenCursePart2/part2 && npm run build && cp -r dist ../../StackOpenCursePart4",
     "deploy:full": "npm run build:ui && git add . && git commit -m \"uibuild v$(npm pkg get version | tr -d '\"')\" && git push",
     "lint": "eslint ."
   },
